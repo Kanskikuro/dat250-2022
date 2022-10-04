@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
 import re
-
+#from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
 def password_check(password):
     """
@@ -15,26 +15,22 @@ def password_check(password):
         1 uppercase letter or more
         1 lowercase letter or more
     """
-    # calculating the length
-    length_error = len(password) < 8
-    # searching for digits
-    digit_error = re.search(r"\d", password) is None
-    # searching for uppercase
-    uppercase_error = re.search(r"[A-Z]", password) is None
-    # searching for lowercase
-    lowercase_error = re.search(r"[a-z]", password) is None
-    # searching for symbols
-    symbol_error = re.search(r"\W", password) is None
-    # overall result
-    password_ok = not (length_error or digit_error or uppercase_error or lowercase_error or symbol_error)
+    password_ok = not (len(password) < 8 or re.search(r"\d", password) is None or re.search(r"[A-Z]", password) is None or re.search(r"[a-z]", password) is None or  re.search(r"\W", password) is None)
 
     if password_ok:
         return True
     else:
         return False
 
-import hashlib
+#import hashlib
+
 # this file contains all the different routes, and the logic for communicating with the database
+
+
+#login_manager = LoginManager()
+#login_manager.init_app(app)
+#login_manager.login_view='login'
+
 
 # home page/login/registration
 @app.route('/', methods=['GET', 'POST'])
@@ -43,8 +39,6 @@ def index():
     form = IndexForm()
 
     if form.login.is_submitted() and form.login.submit.data:
-
-
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(form.login.username.data), one=True)
         if user == None:
             flash('Sorry, wrong password!')
@@ -75,18 +69,17 @@ def index():
         else:
             flash("Fill out register")
             return redirect(url_for('index'))
-            
     return render_template('index.html', title='Welcome', form=form)
 
 
-
 # content stream page
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+            #returns True if the extention is allowed, False if not
 
 @app.route('/stream/<username>', methods=['GET', 'POST'])
+#@login_required
 def stream(username):
     form = PostForm()
     user = query_db(
@@ -116,7 +109,6 @@ def comments(username, p_id):
     form = CommentsForm()
     if form.is_submitted():
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
-
         query_db('INSERT INTO Comments (p_id, u_id, comment, creation_time) VALUES({}, {}, "{}", \'{}\');'.format(p_id,
                                                                                                                   user[
                                                                                                                       'id'],
@@ -129,7 +121,6 @@ def comments(username, p_id):
             p_id))
     return render_template('comments.html', title='Comments', username=username, form=form, post=post,
                            comments=all_comments)
-
 
 # page for seeing and adding friends
 @app.route('/friends/<username>', methods=['GET', 'POST'])
