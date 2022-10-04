@@ -4,6 +4,7 @@ from app.forms import IndexForm, PostForm, FriendsForm, ProfileForm, CommentsFor
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
+import re
 
 
 def password_check(password):
@@ -46,7 +47,7 @@ def index():
 
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(form.login.username.data), one=True)
         if user == None:
-            flash('Sorry, this user does not exist!')
+            flash('Sorry, wrong password!')
         elif user['password'] == form.login.password.data:
             return redirect(url_for('stream', username=form.login.username.data))
         else:
@@ -54,15 +55,15 @@ def index():
 
     elif form.register.is_submitted() and form.register.submit.data:
         if form.register.username.data and form.register.first_name.data and form.register.last_name.data and form.register.password.data and form.register.confirm_password.data:
-            salt="5gz"
-            Password= form.register.password.data+salt
-            hashed=hashlib.md5(Password.encode())
+            #salt="5gz"
+            #Password= form.register.password.data+salt
+            #hashed=hashlib.md5(Password.encode())
             if password_check(form.register.password.data):
                 if form.register.password.data == form.register.confirm_password.data:
                     query_db(
-                        'INSERT INTO Users (username, first_name, last_name, password, attempts) VALUES("{}", "{}", "{}", "{}", 5);'.format(
+                        'INSERT INTO Users (username, first_name, last_name, password) VALUES("{}", "{}", "{}", "{}");'.format(
                             form.register.username.data, form.register.first_name.data,
-                            form.register.last_name.data, hashed))
+                            form.register.last_name.data, form.register.password.data))
                     flash("Successful register")
                     return redirect(url_for('index'))
                 else:

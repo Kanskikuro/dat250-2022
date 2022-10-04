@@ -11,10 +11,10 @@ from wtforms.validators import InputRequired, Length, DataRequired, Regexp
 
 class LoginForm(FlaskForm):
     username = StringField('Username',
-                           validators=[Length(min=5, max=20), Regexp('[0-9A-Za-z]'), DataRequired('Required')],
+                           validators=[Length(min=5, max=20), Regexp('[0-9A-Za-z]'), DataRequired()],
                            render_kw={'placeholder': 'Username'})
     password = PasswordField('Password',
-                             validators=[Length(min=5, max=20), Regexp('[0-9A-Za-z]'), DataRequired('Required')],
+                             validators=[Length(min=5, max=20), Regexp('[0-9A-Za-z]'), DataRequired()],
                              render_kw={'placeholder': 'Password'})
     remember_me = BooleanField(
         'Remember me')  # TODO: It would be nice to have this feature implemented, probably by using cookies
