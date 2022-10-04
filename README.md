@@ -9,7 +9,7 @@ List of vurnebilities from social insecurity:
 - [ ]	Hashing password
 - [ ]	Website error when inputting "
 - [ ]	clickjacking
-- [ ]	no Anti-CSRF
+- [x]	no Anti-CSRF
 - [ ]	X-content type option header missing  - risk to xss attack
 - [ ]	cookie can be scooped
 - [ ]	cross domain config

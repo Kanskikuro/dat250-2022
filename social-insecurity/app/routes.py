@@ -41,7 +41,7 @@ def index():
     if form.login.is_submitted() and form.login.submit.data:
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(form.login.username.data), one=True)
         if user == None:
-            flash('Sorry, this user does not exist!')
+            flash('Sorry, wrong password!')
         elif user['password'] == form.login.password.data:
             return redirect(url_for('stream', username=form.login.username.data))
         else:
@@ -49,6 +49,9 @@ def index():
 
     elif form.register.is_submitted() and form.register.submit.data:
         if form.register.username.data and form.register.first_name.data and form.register.last_name.data and form.register.password.data and form.register.confirm_password.data:
+            #salt="5gz"
+            #Password= form.register.password.data+salt
+            #hashed=hashlib.md5(Password.encode())
             if password_check(form.register.password.data):
                 if form.register.password.data == form.register.confirm_password.data:
                     query_db(
