@@ -5,6 +5,8 @@ from app.forms import IndexForm, PostForm, FriendsForm, ProfileForm, CommentsFor
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
+
+
 def password_check(password):
     """
         8 characters length or more
@@ -39,7 +41,6 @@ def password_check(password):
 def index():
     form = IndexForm()
 
-
     if form.login.is_submitted() and form.login.submit:
 
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(form.login.username.data), one=True)
@@ -69,7 +70,9 @@ def index():
         else:
             flash("Fill out register")
             return redirect(url_for('index'))
+
     return render_template('index.html', title='Welcome', form=form)
+
 
 
 # content stream page
@@ -113,7 +116,6 @@ def comments(username, p_id):
     form = CommentsForm()
     if form.is_submitted():
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
-
         query_db('INSERT INTO Comments (p_id, u_id, comment, creation_time) VALUES({}, {}, "{}", \'{}\');'.format(p_id,
                                                                                                                   user[
                                                                                                                       'id'],
@@ -126,8 +128,6 @@ def comments(username, p_id):
             p_id))
     return render_template('comments.html', title='Comments', username=username, form=form, post=post,
                            comments=all_comments)
-
-
 
 # page for seeing and adding friends
 @app.route('/friends/<username>', methods=['GET', 'POST'])

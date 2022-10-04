@@ -12,7 +12,9 @@ app.config.from_object(Config)
 
 
 # TODO: Handle login management better, maybe with flask_login?
+
 #login = LoginManager(app)
+
 
 
 # get an instance of the db
