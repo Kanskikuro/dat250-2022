@@ -33,7 +33,6 @@ def password_check(password):
     else:
         return False
 
-
 # this file contains all the different routes, and the logic for communicating with the database
 
 # home page/login/registration
@@ -71,6 +70,9 @@ def index():
         else:
             flash("Fill out register")
             return redirect(url_for('index'))
+
+    return render_template('index.html', title='Welcome', form=form)
+
 
 
 # content stream page
@@ -161,4 +163,3 @@ def profile(username):
 
     user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
     return render_template('profile.html', title='profile', username=username, user=user, form=form)
-
