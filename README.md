@@ -1,5 +1,5 @@
-# dat250-2022 Group 2
-List of vurnebilities from social insecurity:
+# Dat250-2022 Group 2
+##List of vurnebilities from social insecurity:
 
 - [ ]	Broken Authentication - No safe way to prove who you are and no password rules. 
 - [ ]	Broken access control - change of the url. People has full access to others account by path traversing
