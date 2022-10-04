@@ -6,7 +6,7 @@ List of vurnebilities from social insecurity:
 - [ ]	Broken access control - change of the url. People has full access to others account by path traversing
 - [ ]	Insufficient Logging & Monitoring -No' time out / attemt restrictions, makes it eligible for brute force attacks. 
 - [x]	Unrestricted File Upload - can upload anythiong
-- [ ]	Hashing password
+- [x]	Hashing password
 - [ ]	Website error when inputting "
 - [ ]	clickjacking
 - [ ]	no Anti-CSRF
