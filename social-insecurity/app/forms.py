@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, FormField, TextAreaField, FileField
 from wtforms.fields.html5 import DateField
+from wtforms.validators import InputRequired, Length, DataRequired, Regexp
 
 # defines all forms in the application, these will be instantiated by the template,
 # and the routes.py will read the values of the fields
@@ -9,27 +10,37 @@ from wtforms.fields.html5 import DateField
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', render_kw={'placeholder': 'Username'})
-    password = PasswordField('Password', render_kw={'placeholder': 'Password'})
-    remember_me = BooleanField('Remember me') # TODO: It would be nice to have this feature implemented, probably by using cookies
+    username = StringField('Username',
+                           validators=[Length(min=5, max=20), Regexp('[0-9A-Za-z]'), DataRequired('Required')],
+                           render_kw={'placeholder': 'Username'})
+    password = PasswordField('Password',
+                             validators=[Length(min=5, max=20), Regexp('[0-9A-Za-z]'), DataRequired('Required')],
+                             render_kw={'placeholder': 'Password'})
+    remember_me = BooleanField(
+        'Remember me')  # TODO: It would be nice to have this feature implemented, probably by using cookies
     submit = SubmitField('Sign In')
 
 class RegisterForm(FlaskForm):
     first_name = StringField('First Name', render_kw={'placeholder': 'First Name'})
     last_name = StringField('Last Name', render_kw={'placeholder': 'Last Name'})
     username = StringField('Username', render_kw={'placeholder': 'Username'})
-    password = PasswordField('Password', render_kw={'placeholder': 'Password'})
+    password = PasswordField('Password', render_kw={
+        'placeholder': 'Password must contain min length 8, 1 upper and lower letter, 1 number and 1 symbol'})
     confirm_password = PasswordField('Confirm Password', render_kw={'placeholder': 'Confirm Password'})
     submit = SubmitField('Sign Up')
+
 
 class IndexForm(FlaskForm):
     login = FormField(LoginForm)
     register = FormField(RegisterForm)
 
 class PostForm(FlaskForm):
-    content = TextAreaField('New Post', render_kw={'placeholder': 'What are you thinking about?'})
+    content = TextAreaField('New Post',
+                            validators=[Length(min=5, max=20), Regexp('[0-9A-Za-z_]+'), DataRequired('Required')],
+                            render_kw={'placeholder': 'What are you thinking about?'})
     image = FileField('Image')
     submit = SubmitField('Post')
+
 
 class CommentsForm(FlaskForm):
     comment = TextAreaField('New Comment', render_kw={'placeholder': 'What do you have to say?'})
