@@ -5,8 +5,6 @@ from app.forms import IndexForm, PostForm, FriendsForm, ProfileForm, CommentsFor
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
-
-
 def password_check(password):
     """
         8 characters length or more
@@ -33,7 +31,6 @@ def password_check(password):
     else:
         return False
 
-
 # this file contains all the different routes, and the logic for communicating with the database
 
 # home page/login/registration
@@ -41,6 +38,7 @@ def password_check(password):
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     form = IndexForm()
+
 
     if form.login.is_submitted() and form.login.submit:
 
@@ -109,13 +107,13 @@ def stream(username):
             user['id']))
     return render_template('stream.html', title='Stream', username=username, form=form, posts=posts)
 
-
 # comment page for a given post and user.
 @app.route('/comments/<username>/<int:p_id>', methods=['GET', 'POST'])
 def comments(username, p_id):
     form = CommentsForm()
     if form.is_submitted():
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
+
         query_db('INSERT INTO Comments (p_id, u_id, comment, creation_time) VALUES({}, {}, "{}", \'{}\');'.format(p_id,
                                                                                                                   user[
                                                                                                                       'id'],
@@ -130,6 +128,7 @@ def comments(username, p_id):
                            comments=all_comments)
 
 
+
 # page for seeing and adding friends
 @app.route('/friends/<username>', methods=['GET', 'POST'])
 def friends(username):
@@ -141,6 +140,7 @@ def friends(username):
             flash('User does not exist')
         else:
             query_db('INSERT INTO Friends (u_id, f_id) VALUES({}, {});'.format(user['id'], friend['id']))
+
 
     all_friends = query_db(
         'SELECT * FROM Friends AS f JOIN Users as u ON f.f_id=u.id WHERE f.u_id={} AND f.f_id!={} ;'.format(user['id'],
@@ -159,6 +159,7 @@ def profile(username):
                 form.birthday.data, username
             ))
         return redirect(url_for('profile', username=username))
+
 
     user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
     return render_template('profile.html', title='profile', username=username, user=user, form=form)
