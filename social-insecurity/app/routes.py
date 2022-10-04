@@ -27,7 +27,7 @@ def index():
         Password= form.register.password.data+salt
         hashed=hashlib.md5(Password.encode())
         query_db('INSERT INTO Users (username, first_name, last_name, password) VALUES("{}", "{}", "{}", "{}");'.format(form.register.username.data, form.register.first_name.data,
-         form.register.last_name.data, hashed))
+         form.register.last_name.data, form.register.password.data))
         return redirect(url_for('index'))
     return render_template('index.html', title='Welcome', form=form)
 

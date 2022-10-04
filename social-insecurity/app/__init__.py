@@ -16,6 +16,7 @@ app.config.from_object(Config)
 #login = LoginManager(app)
 
 
+
 # get an instance of the db
 def get_db():
     db = getattr(g, '_database', None)
