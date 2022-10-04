@@ -4,7 +4,8 @@ from app.forms import IndexForm, PostForm, FriendsForm, ProfileForm, CommentsFor
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
-
+import re
+#from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
 def password_check(password):
     """
@@ -14,26 +15,22 @@ def password_check(password):
         1 uppercase letter or more
         1 lowercase letter or more
     """
-    # calculating the length
-    length_error = len(password) < 8
-    # searching for digits
-    digit_error = re.search(r"\d", password) is None
-    # searching for uppercase
-    uppercase_error = re.search(r"[A-Z]", password) is None
-    # searching for lowercase
-    lowercase_error = re.search(r"[a-z]", password) is None
-    # searching for symbols
-    symbol_error = re.search(r"\W", password) is None
-    # overall result
-    password_ok = not (length_error or digit_error or uppercase_error or lowercase_error or symbol_error)
+    password_ok = not (len(password) < 8 or re.search(r"\d", password) is None or re.search(r"[A-Z]", password) is None or re.search(r"[a-z]", password) is None or  re.search(r"\W", password) is None)
 
     if password_ok:
         return True
     else:
         return False
 
-import hashlib
+#import hashlib
+
 # this file contains all the different routes, and the logic for communicating with the database
+
+
+#login_manager = LoginManager()
+#login_manager.init_app(app)
+#login_manager.login_view='login'
+
 
 # home page/login/registration
 @app.route('/', methods=['GET', 'POST'])
@@ -52,15 +49,12 @@ def index():
 
     elif form.register.is_submitted() and form.register.submit.data:
         if form.register.username.data and form.register.first_name.data and form.register.last_name.data and form.register.password.data and form.register.confirm_password.data:
-            salt="5gz"
-            Password= form.register.password.data+salt
-            hashed=hashlib.md5(Password.encode())
             if password_check(form.register.password.data):
                 if form.register.password.data == form.register.confirm_password.data:
                     query_db(
-                        'INSERT INTO Users (username, first_name, last_name, password, attempts) VALUES("{}", "{}", "{}", "{}", 5);'.format(
+                        'INSERT INTO Users (username, first_name, last_name, password) VALUES("{}", "{}", "{}", "{}");'.format(
                             form.register.username.data, form.register.first_name.data,
-                            form.register.last_name.data, hashed))
+                            form.register.last_name.data, form.register.password.data))
                     flash("Successful register")
                     return redirect(url_for('index'))
                 else:
@@ -76,12 +70,13 @@ def index():
 
 
 # content stream page
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+            #returns True if the extention is allowed, False if not
 
 @app.route('/stream/<username>', methods=['GET', 'POST'])
+#@login_required
 def stream(username):
     form = PostForm()
     user = query_db(
