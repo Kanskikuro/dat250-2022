@@ -5,6 +5,33 @@ from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
 
+
+def password_check(password):
+    """
+        8 characters length or more
+        1 digit or more
+        1 symbol or more
+        1 uppercase letter or more
+        1 lowercase letter or more
+    """
+    # calculating the length
+    length_error = len(password) < 8
+    # searching for digits
+    digit_error = re.search(r"\d", password) is None
+    # searching for uppercase
+    uppercase_error = re.search(r"[A-Z]", password) is None
+    # searching for lowercase
+    lowercase_error = re.search(r"[a-z]", password) is None
+    # searching for symbols
+    symbol_error = re.search(r"\W", password) is None
+    # overall result
+    password_ok = not (length_error or digit_error or uppercase_error or lowercase_error or symbol_error)
+
+    if password_ok:
+        return True
+    else:
+        return False
+
 import hashlib
 # this file contains all the different routes, and the logic for communicating with the database
 
@@ -13,7 +40,10 @@ import hashlib
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     form = IndexForm()
+
     if form.login.is_submitted() and form.login.submit.data:
+
+
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(form.login.username.data), one=True)
         if user == None:
             flash('Sorry, this user does not exist!')
@@ -23,13 +53,30 @@ def index():
             flash('Sorry, wrong password!')
 
     elif form.register.is_submitted() and form.register.submit.data:
-        salt="5gz"
-        Password= form.register.password.data+salt
-        hashed=hashlib.md5(Password.encode())
-        query_db('INSERT INTO Users (username, first_name, last_name, password) VALUES("{}", "{}", "{}", "{}");'.format(form.register.username.data, form.register.first_name.data,
-         form.register.last_name.data, hashed))
-        return redirect(url_for('index'))
+        if form.register.username.data and form.register.first_name.data and form.register.last_name.data and form.register.password.data and form.register.confirm_password.data:
+            salt="5gz"
+            Password= form.register.password.data+salt
+            hashed=hashlib.md5(Password.encode())
+            if password_check(form.register.password.data):
+                if form.register.password.data == form.register.confirm_password.data:
+                    query_db(
+                        'INSERT INTO Users (username, first_name, last_name, password, attempts) VALUES("{}", "{}", "{}", "{}", 5);'.format(
+                            form.register.username.data, form.register.first_name.data,
+                            form.register.last_name.data, hashed))
+                    flash("Successful register")
+                    return redirect(url_for('index'))
+                else:
+                    flash("Password is different")
+                    return redirect(url_for('index'))
+            else:
+                flash("Password must contain requirements")
+                return redirect(url_for('index'))
+        else:
+            flash("Fill out register")
+            return redirect(url_for('index'))
+            
     return render_template('index.html', title='Welcome', form=form)
+
 
 
 # content stream page
@@ -68,11 +115,20 @@ def comments(username, p_id):
     form = CommentsForm()
     if form.is_submitted():
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
-        query_db('INSERT INTO Comments (p_id, u_id, comment, creation_time) VALUES({}, {}, "{}", \'{}\');'.format(p_id, user['id'], form.comment.data, datetime.now()))
+
+        query_db('INSERT INTO Comments (p_id, u_id, comment, creation_time) VALUES({}, {}, "{}", \'{}\');'.format(p_id,
+                                                                                                                  user[
+                                                                                                                      'id'],
+                                                                                                                  form.comment.data,
+                                                                                                                  datetime.now()))
 
     post = query_db('SELECT * FROM Posts WHERE id={};'.format(p_id), one=True)
-    all_comments = query_db('SELECT DISTINCT * FROM Comments AS c JOIN Users AS u ON c.u_id=u.id WHERE c.p_id={} ORDER BY c.creation_time DESC;'.format(p_id))
-    return render_template('comments.html', title='Comments', username=username, form=form, post=post, comments=all_comments)
+    all_comments = query_db(
+        'SELECT DISTINCT * FROM Comments AS c JOIN Users AS u ON c.u_id=u.id WHERE c.p_id={} ORDER BY c.creation_time DESC;'.format(
+            p_id))
+    return render_template('comments.html', title='Comments', username=username, form=form, post=post,
+                           comments=all_comments)
+
 
 # page for seeing and adding friends
 @app.route('/friends/<username>', methods=['GET', 'POST'])
