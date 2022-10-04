@@ -4,7 +4,6 @@ from app.forms import IndexForm, PostForm, FriendsForm, ProfileForm, CommentsFor
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
-import login_user 
 
 
 
