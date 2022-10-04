@@ -5,10 +5,13 @@ from flask_login import LoginManager
 import sqlite3
 import os
 
+login_manager = LoginManager()
+
 # create and configure app
 app = Flask(__name__)
 Bootstrap(app)
 app.config.from_object(Config)
+
 
 # TODO: Handle login management better, maybe with flask_login?
 login = LoginManager(app)
