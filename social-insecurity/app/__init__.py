@@ -1,15 +1,30 @@
 from flask import Flask, g
 from config import Config
 from flask_bootstrap import Bootstrap
-
-#from flask_login import LoginManager
-
+from flask_login import LoginManager, UserMixin
 import sqlite3
 import os
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 Bootstrap(app)
 app.config.from_object(Config)
+
+login_manager = LoginManager(app)
+login_manager.login_view='index'
+
+db=SQLAlchemy(app)
+
+class Users(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20))
+    
+
+db.create_all
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(int(user_id))
 
 # get an instance of the db
 def get_db():
@@ -37,6 +52,7 @@ def query_db(query, one=False):
     return (rv[0] if rv else None) if one else rv
 
 # TODO: Add more specific queries to simplify code
+
 
 # automatically called when application is closed, and closes db connection
 @app.teardown_appcontext

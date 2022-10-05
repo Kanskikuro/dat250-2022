@@ -7,3 +7,6 @@ class Config(object):
     DATABASE = 'database.db'
     UPLOAD_PATH = 'app/static/uploads'
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    
+    SQLALCHEMY_TRACK_MPDOFICATIONS= False
+    SQLALCHEMY_DATABASE_URI='sqlite:///../database.db'
