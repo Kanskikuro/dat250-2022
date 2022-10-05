@@ -5,8 +5,8 @@ from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
 import re
-#from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-
+from flask_login import login_user, login_required, logout_user
+from app.__init__ import Users, qb
 def password_check(password):
     """
         8 characters length or more
@@ -26,12 +26,6 @@ def password_check(password):
 
 # this file contains all the different routes, and the logic for communicating with the database
 
-
-#login_manager = LoginManager()
-#login_manager.init_app(app)
-#login_manager.login_view='login'
-
-
 # home page/login/registration
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -43,6 +37,7 @@ def index():
         if user == None:
             flash('Sorry, wrong password!')
         elif user['password'] == form.login.password.data:
+            login_user(Users.query.filter_by(username=form.login.username.data).first())
             return redirect(url_for('stream', username=form.login.username.data))
         else:
             flash('Sorry, wrong password!')
@@ -79,7 +74,7 @@ def allowed_file(filename):
             #returns True if the extention is allowed, False if not
 
 @app.route('/stream/<username>', methods=['GET', 'POST'])
-#@login_required
+@login_required
 def stream(username):
     form = PostForm()
     user = query_db(
@@ -105,6 +100,7 @@ def stream(username):
 
 # comment page for a given post and user.
 @app.route('/comments/<username>/<int:p_id>', methods=['GET', 'POST'])
+@login_required
 def comments(username, p_id):
     form = CommentsForm()
     if form.is_submitted():
@@ -124,6 +120,7 @@ def comments(username, p_id):
 
 # page for seeing and adding friends
 @app.route('/friends/<username>', methods=['GET', 'POST'])
+@login_required
 def friends(username):
     form = FriendsForm()
     user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
@@ -139,6 +136,7 @@ def friends(username):
 
 # see and edit detailed profile information of a user
 @app.route('/profile/<username>', methods=['GET', 'POST'])
+@login_required
 def profile(username):
     form = ProfileForm()
     if form.is_submitted():
