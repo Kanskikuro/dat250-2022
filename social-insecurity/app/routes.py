@@ -57,9 +57,10 @@ def index():
 
     elif form.register.is_submitted() and form.register.submit.data:
         if password_check(form.register.password.data):
-            query_db('INSERT INTO Users (username, first_name, last_name, password) VALUES("{}", "{}", "{}", "{}");'.format(
-                form.register.username.data, form.register.first_name.data,
-                form.register.last_name.data, form.register.password.data))
+            query_db(
+                'INSERT INTO Users (username, first_name, last_name, password) VALUES("{}", "{}", "{}", "{}");'.format(
+                    form.register.username.data, form.register.first_name.data,
+                    form.register.last_name.data, form.register.password.data))
         else:
             flash("Password does not meet the requirements")
         return redirect(url_for('index'))
