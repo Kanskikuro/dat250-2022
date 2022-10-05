@@ -5,7 +5,8 @@ from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
 import re
-
+from flask_login import login_user, login_required, logout_user
+from app.__init__ import Users, qb
 
 def password_check(password):
     """
@@ -15,18 +16,7 @@ def password_check(password):
         1 uppercase letter or more
         1 lowercase letter or more
     """
-    # calculating the length
-    length_error = len(password) < 8
-    # searching for digits
-    digit_error = re.search(r"\d", password) is None
-    # searching for uppercase
-    uppercase_error = re.search(r"[A-Z]", password) is None
-    # searching for lowercase
-    lowercase_error = re.search(r"[a-z]", password) is None
-    # searching for symbols
-    symbol_error = re.search(r"\W", password) is None
-    # overall result
-    password_ok = not (length_error or digit_error or uppercase_error or lowercase_error or symbol_error)
+    password_ok = not (len(password) < 8 or re.search(r"\d", password) is None or re.search(r"[A-Z]", password) is None or re.search(r"[a-z]", password) is None or  re.search(r"\W", password) is None)
 
     if password_ok:
         return True
@@ -50,6 +40,7 @@ def index():
         if user == None:
             flash('Sorry, wrong password!')
         elif user['password'] == form.login.password.data:
+            login_user(Users.query.filter_by(username=form.login.username.data).first())
             return redirect(url_for('stream', username=form.login.username.data))
         else:
             flash('Sorry, wrong password!')
@@ -67,17 +58,19 @@ def index():
 
     return render_template('index.html', title='Welcome', form=form)
 
-
 # content stream page
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+   return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+            #returns True if the extention is allowed, False if not
+
 
 
 @app.route('/stream/<username>', methods=['GET', 'POST'])
+@login_required
 def stream(username):
     form = PostForm()
     user = query_db(
@@ -106,11 +99,11 @@ def stream(username):
 
 # comment page for a given post and user.
 @app.route('/comments/<username>/<int:p_id>', methods=['GET', 'POST'])
+@login_required
 def comments(username, p_id):
     form = CommentsForm()
     if form.is_submitted():
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
-
         query_db('INSERT INTO Comments (p_id, u_id, comment, creation_time) VALUES({}, {}, "{}", \'{}\');'.format(p_id,
                                                                                                                   user[
                                                                                                                       'id'],
@@ -124,9 +117,9 @@ def comments(username, p_id):
     return render_template('comments.html', title='Comments', username=username, form=form, post=post,
                            comments=all_comments)
 
-
 # page for seeing and adding friends
 @app.route('/friends/<username>', methods=['GET', 'POST'])
+@login_required
 def friends(username):
     form = FriendsForm()
     user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
@@ -145,6 +138,7 @@ def friends(username):
 
 # see and edit detailed profile information of a user
 @app.route('/profile/<username>', methods=['GET', 'POST'])
+@login_required
 def profile(username):
     form = ProfileForm()
     if form.is_submitted():

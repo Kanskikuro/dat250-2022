@@ -2,15 +2,16 @@
 
 List of vurnebilities from social insecurity:
 
-- [ ]	Broken Authentication - No safe way to prove who you are and no password rules. 
-- [ ]	Broken access control - change of the url. People has full access to others account by path traversing
-- [ ]	Insufficient Logging & Monitoring -No' time out / attemt restrictions, makes it eligible for brute force attacks. 
-- [x]	Unrestricted File Upload - can upload anythiong
-- [ ]	Hashing password
+- [ ] w	Broken Authentication - No safe way to prove who you are and no password rules.  **Solved by using flask login**
+- [ ] w	Broken access control - change of the url. People has full access to others account by path traversing. **Solved by using flask login**
+- [ ] Insufficient Logging & Monitoring -No' time out / attemt restrictions, makes it eligible for brute force attacks. 
+- [x]	Unrestricted File Upload - can upload anythiong. **Checking extentions of files**
+- [ ] w	Hashing password. solved by using flask login
 - [ ]	Website error when inputting "
 - [ ]	clickjacking
-- [ ]	no Anti-CSRF
+- [x]	no Anti-CSRF **Solved by adding form.csrf_token() on each form html**
 - [ ]	X-content type option header missing  - risk to xss attack
 - [ ]	cookie can be scooped
 - [ ]	cross domain config
 - [ ]	content secure policy
+- [x] Unupdated Libaries. **Solved by updating to a the latest version**
