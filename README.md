@@ -14,4 +14,4 @@ List of vurnebilities from social insecurity:
 - [ ]	cookie can be scooped
 - [ ]	cross domain config
 - [ ]	content secure policy
-- [x] Unupdated Libaries. **Solved by updatign to a the latest version**
+- [x] Unupdated Libaries. **Solved by updating to a the latest version**
