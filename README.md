@@ -9,7 +9,7 @@ List of vurnebilities from social insecurity:
 - [ ] w	Hashing password. solved by using flask login
 - [ ]	Website error when inputting "
 - [ ]	clickjacking
-- [x]	no Anti-CSRF **Solved by**
+- [x]	no Anti-CSRF **Solved by adding form.csrf_token() on each form html**
 - [ ]	X-content type option header missing  - risk to xss attack
 - [ ]	cookie can be scooped
 - [ ]	cross domain config
