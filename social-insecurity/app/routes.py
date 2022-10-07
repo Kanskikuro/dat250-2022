@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 import re
 from flask_login import login_user, login_required, logout_user, login_manager, current_user
 from app.__init__ import User, load_user
+import hashlib
 
 def password_check(password):
     """
@@ -23,7 +24,7 @@ def password_check(password):
     else:
         return False
 
-#import hashlib
+salt = "5gz"
 
 #home page/login/registration
 @app.route('/', methods=['GET', 'POST'])
@@ -34,7 +35,7 @@ def index():
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(form.login.username.data), one=True)
         if user == None:
             flash('Sorry, wrong password!')
-        elif user['password'] == form.login.password.data:
+        elif user['password'] == (hashlib.sha256((form.login.password.data + salt) .encode() )).hexdigest():
             login_user(load_user(user["id"]))
             return redirect(url_for('stream'))
         else:
@@ -42,11 +43,11 @@ def index():
 
 
     elif form.register.is_submitted() and form.register.submit.data:
-        if password_check(form.register.password.data):
+        if password_check(form.register.password.data): 
             query_db(
                 'INSERT INTO Users (username, first_name, last_name, password) VALUES("{}", "{}", "{}", "{}");'.format(
                     form.register.username.data, form.register.first_name.data,
-                    form.register.last_name.data, form.register.password.data))
+                    form.register.last_name.data, (hashlib.sha256((form.regiser.password.data + salt) .encode() )).hexdigest() ))
         else:
             flash("Password does not meet the requirements")
         return redirect(url_for('index'))
@@ -99,6 +100,7 @@ def stream():
 def comments():
     username = current_user.username
     p_id = current_user.post.id
+    print(p_id)
     form = CommentsForm()
     if form.is_submitted():
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
@@ -147,7 +149,7 @@ def profile():
                 form.education.data, form.employment.data, form.music.data, form.movie.data, form.nationality.data,
                 form.birthday.data, username
             ))
-        return redirect(url_for('profile'))
+        return redirect(url_for('profile', username=username))
 
     user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
     return render_template('profile.html', title='profile', username=username, user=user, form=form)
