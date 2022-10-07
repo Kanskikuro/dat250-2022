@@ -24,17 +24,20 @@ def set_secure_headers(response):
     return response
 
 
-class Users(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20))
-
-
-db.create_all
+class User(UserMixin):
+    def __init__(self,id,username):
+        self.id=id
+        self.username=username
 
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Users.query.get(int(user_id))
+    user = query_db('SELECT * FROM Users WHERE id="{}";'.format(user_id), one=True)
+    if user is None:
+        return None
+    else:
+        return User(user_id,user[1])
+
 
 
 # get an instance of the db
