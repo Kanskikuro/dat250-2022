@@ -13,5 +13,5 @@ List of vurnebilities from social insecurity:
 - [x]	X-content type option header missing  - risk to xss attack **Solved by adding X-Content-Type-Options = nosniff on header**
 - [ ]	cookie can be scooped
 - [ ]	cross domain config
-- [ ]	content secure policy
+- [x]	content secure policy **Solved by adding security to base.html header**
 - [x] Unupdated Libaries. **Solved by updating to a the latest version**
