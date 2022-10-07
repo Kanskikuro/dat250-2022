@@ -6,14 +6,9 @@ from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
 import re
-<<<<<<< HEAD
 from flask_login import login_user, login_required, logout_user, login_manager, current_user
 from app.__init__ import User, load_user
 
-=======
-from flask_login import login_user, login_required, logout_user
-from app.__init__ import Users
->>>>>>> 749f6db591ba711b1cafd14aa75ed281543997bc
 def password_check(password):
     """
         8 characters length or more
