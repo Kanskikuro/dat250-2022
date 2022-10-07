@@ -99,7 +99,6 @@ def stream():
 def comments():
     username = current_user.username
     p_id = current_user.post.id
-    print(p_id)
     form = CommentsForm()
     if form.is_submitted():
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
@@ -148,18 +147,17 @@ def profile():
                 form.education.data, form.employment.data, form.music.data, form.movie.data, form.nationality.data,
                 form.birthday.data, username
             ))
-        return redirect(url_for('profile', username=username))
+        return redirect(url_for('profile'))
 
     user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
     return render_template('profile.html', title='profile', username=username, user=user, form=form)
 
-@app.route('/profileFriend', methods=['GET', 'POST'])
+@app.route('/profileFriend/<friend>', methods=['GET', 'POST'])
 @login_required
-def profileFriend():
-    username = current_user.username
+def profileFriend(friend):
     form = ProfileForm()
-    user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
-    return render_template('profile.html', title='Friend profile', username=username, user=user, form=form)
+    user = query_db('SELECT * FROM Users WHERE username="{}";'.format(friend), one=True)
+    return render_template('profileFriend.html', title='Friend profile', friend=friend, user=user, form=form)
 
 @app.route("/logout")
 @login_required
