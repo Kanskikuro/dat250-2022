@@ -6,7 +6,7 @@ List of vurnebilities from social insecurity:
 - [ ] w	Broken access control - change of the url. People has full access to others account by path traversing. **Solved by using flask login**
 - [ ] Insufficient Logging & Monitoring -No' time out / attemt restrictions, makes it eligible for brute force attacks. 
 - [x]	Unrestricted File Upload - can upload anythiong. **Checking extentions of files**
-- [ ] w	Hashing password. solved by using flask login
+- [ ] w	Hashing password. **Solved by using flask login**
 - [ ]	Website error when inputting "
 - [x]	clickjacking **Solved by adding X-Frame-Options = SAMEORIGIN on header**
 - [x]	no Anti-CSRF **Solved by adding form.csrf_token() on each form html**
