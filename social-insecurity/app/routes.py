@@ -94,11 +94,12 @@ def stream():
 
 
 # comment page for a given post and user.
-@app.route('/comments/<username>/<int:p_id>', methods=['GET', 'POST'])
+@app.route('/comments', methods=['GET', 'POST'])
 @login_required
-def comments(username, p_id):
+def comments():
     username = current_user.username
-    p_id = int(current_user.id)
+    p_id = current_user.post.id
+    print(p_id)
     form = CommentsForm()
     if form.is_submitted():
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
@@ -151,6 +152,14 @@ def profile():
 
     user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
     return render_template('profile.html', title='profile', username=username, user=user, form=form)
+
+@app.route('/profileFriend', methods=['GET', 'POST'])
+@login_required
+def profileFriend():
+    username = current_user.username
+    form = ProfileForm()
+    user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
+    return render_template('profile.html', title='Friend profile', username=username, user=user, form=form)
 
 @app.route("/logout")
 @login_required
