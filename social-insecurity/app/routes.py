@@ -1,3 +1,4 @@
+from ssl import AlertDescription
 from flask import render_template, flash, redirect, url_for, request
 from app import app, query_db
 from app.forms import IndexForm, PostForm, FriendsForm, ProfileForm, CommentsForm
@@ -5,8 +6,8 @@ from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
 import re
-from flask_login import login_user, login_required, logout_user
-from app.__init__ import Users, qb
+from flask_login import login_user, login_required, logout_user, login_manager, current_user
+from app.__init__ import User, load_user
 
 def password_check(password):
     """
@@ -17,31 +18,25 @@ def password_check(password):
         1 lowercase letter or more
     """
     password_ok = not (len(password) < 8 or re.search(r"\d", password) is None or re.search(r"[A-Z]", password) is None or re.search(r"[a-z]", password) is None or  re.search(r"\W", password) is None)
-
     if password_ok:
         return True
     else:
         return False
 
+#import hashlib
 
-import hashlib
-
-
-# this file contains all the different routes, and the logic for communicating with the database
-
-# home page/login/registration
+#home page/login/registration
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     form = IndexForm()
-
     if form.login.is_submitted() and form.login.submit.data:
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(form.login.username.data), one=True)
         if user == None:
             flash('Sorry, wrong password!')
         elif user['password'] == form.login.password.data:
-            login_user(Users.query.filter_by(username=form.login.username.data).first())
-            return redirect(url_for('stream', username=form.login.username.data))
+            login_user(load_user(user["id"]))
+            return redirect(url_for('stream'))
         else:
             flash('Sorry, wrong password!')
 
@@ -69,9 +64,10 @@ def allowed_file(filename):
 
 
 
-@app.route('/stream/<username>', methods=['GET', 'POST'])
+@app.route('/stream', methods=['GET', 'POST'])
 @login_required
-def stream(username):
+def stream():
+    username = current_user.username
     form = PostForm()
     user = query_db(
         'SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
@@ -101,6 +97,8 @@ def stream(username):
 @app.route('/comments/<username>/<int:p_id>', methods=['GET', 'POST'])
 @login_required
 def comments(username, p_id):
+    username = current_user.username
+    p_id = int(current_user.id)
     form = CommentsForm()
     if form.is_submitted():
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
@@ -118,9 +116,10 @@ def comments(username, p_id):
                            comments=all_comments)
 
 # page for seeing and adding friends
-@app.route('/friends/<username>', methods=['GET', 'POST'])
+@app.route('/friends', methods=['GET', 'POST'])
 @login_required
-def friends(username):
+def friends():
+    username = current_user.username
     form = FriendsForm()
     user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
     if form.is_submitted():
@@ -137,9 +136,10 @@ def friends(username):
 
 
 # see and edit detailed profile information of a user
-@app.route('/profile/<username>', methods=['GET', 'POST'])
+@app.route('/profile', methods=['GET', 'POST'])
 @login_required
-def profile(username):
+def profile():
+    username = current_user.username
     form = ProfileForm()
     if form.is_submitted():
         query_db(
@@ -151,3 +151,10 @@ def profile(username):
 
     user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
     return render_template('profile.html', title='profile', username=username, user=user, form=form)
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    print("logged out")
+    return redirect(url_for("index"))
