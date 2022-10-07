@@ -7,6 +7,8 @@ from werkzeug.utils import secure_filename
 import re
 from flask_login import login_user, login_required, logout_user
 from app.__init__ import Users
+
+
 def password_check(password):
     """
         8 characters length or more
