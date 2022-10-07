@@ -23,7 +23,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="row align-items-center">
-                        <a class="col-4" href={{url_for('profile')}}><span class="fa fa-user" style="font-size: 25px"></span>&nbsp;{{post.username}}</a>
+                        <a class="col-4" href={{url_for('profile', username=post.username)}}><span class="fa fa-user" style="font-size: 25px"></span>&nbsp;{{post.username}}</a>
                         <span class="col-8 text-right">{{post.creation_time}}</span>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
                     {% if post.image %}
                     <img src="{{'/static/uploads/' + post.image}}" class="card-img-bottom">
                     {% endif %}
-                    <a href={{ url_for('comments') }}><span class="fa fa-comment"></span>&nbsp;Comments({{post.cc}})</a>
+                    <a href={{ url_for('comments', username=username, p_id=post.id) }}><span class="fa fa-comment"></span>&nbsp;Comments({{post.cc}})</a>
                 </div>
             </div>
         </div>
