@@ -6,11 +6,7 @@ import os
 from werkzeug.utils import secure_filename
 import re
 from flask_login import login_user, login_required, logout_user
-<<<<<<< Updated upstream
-from app.__init__ import Users, qb
-=======
 from app.__init__ import Users
->>>>>>> Stashed changes
 def password_check(password):
     """
         8 characters length or more
