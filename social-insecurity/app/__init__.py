@@ -11,14 +11,24 @@ Bootstrap(app)
 app.config.from_object(Config)
 
 login_manager = LoginManager(app)
-login_manager.login_view='index'
+login_manager.login_view = 'index'
 
-db=SQLAlchemy(app)
+db = SQLAlchemy(app)
+
+
+@app.after_request
+def set_secure_headers(response):
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    return response
+
 
 class User(UserMixin):
     def __init__(self,id,username):
         self.id=id
         self.username=username
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -29,6 +39,7 @@ def load_user(user_id):
         return User(user_id,user[1])
 
 
+
 # get an instance of the db
 def get_db():
     db = getattr(g, '_database', None)
@@ -37,6 +48,7 @@ def get_db():
     db.row_factory = sqlite3.Row
     return db
 
+
 # initialize db for the first time
 def init_db():
     with app.app_context():
@@ -44,6 +56,7 @@ def init_db():
         with app.open_resource('schema.sql', mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()
+
 
 # perform generic query, not very secure yet
 def query_db(query, one=False):
@@ -54,6 +67,7 @@ def query_db(query, one=False):
     db.commit()
     return (rv[0] if rv else None) if one else rv
 
+
 # TODO: Add more specific queries to simplify code
 
 
@@ -63,6 +77,7 @@ def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
+
 
 # initialize db if it does not exist
 if not os.path.exists(app.config['DATABASE']):
