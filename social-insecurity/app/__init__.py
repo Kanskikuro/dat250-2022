@@ -1,4 +1,4 @@
-from flask import Flask, g
+from flask import Flask, g, session
 from config import Config
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, UserMixin
@@ -9,6 +9,11 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 Bootstrap(app)
 app.config.from_object(Config)
+
+app.config.update(
+    SESSION_COOKIE_SAMESITE='Strict',
+    SESSION_COOKIE_SECURE='True'
+)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'index'
