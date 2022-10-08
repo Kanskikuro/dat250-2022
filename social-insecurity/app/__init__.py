@@ -10,6 +10,11 @@ app = Flask(__name__)
 Bootstrap(app)
 app.config.from_object(Config)
 
+app.config.update(
+    SESSION_COOKIE_SAMESITE='Strict',
+    SESSION_COOKIE_SECURE='True'
+)
+
 login_manager = LoginManager(app)
 login_manager.login_view = 'index'
 
