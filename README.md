@@ -1,13 +1,16 @@
 # Dat250-2022 Group 2
+To find vurnebilities we used owasp zap and we did some testing of top 10 owasp vurnebilities.
+
+Gitignore file ignores pycache changes because of github gets conflicted and its not possible to resolve it without deleting the pycache manually eachtime.
+
+Database is deleted for after owasp zap testing and restarting database for password hashing. Also it didnt make sense to have a database for the testers because they wouldnt know the passsword and usernames unless they used sql lite.
 
 List of vurnebilities from social insecurity:
-
 - [X] Broken Authentication - No safe way to prove who you are and no password rules.   **Solved by using flask login**
      - [x] Insufficient Logging & Monitoring -No' time out  **Session timeout with flask.session.**
      - [ ] Attemt restrictstions. Idea to solving, using limiter however importing get_remote_adress wouldnt work to out favour
      - [X] Hashing password.  **Solved by using Hashlib_SHA256**
      - [x] passwrod requirements  **adding requirements**
-     
 - [X] Broken access control - change of the url. People has full access to others account by path traversing.   **Solved by using flask login**
 - [x] Unrestricted File Upload - can upload anythiong.        **Checking extentions of files**
 - [ ] Website error when inputting ' " '
