@@ -13,7 +13,7 @@ List of vurnebilities from social insecurity:
 - [x]	clickjacking   **Solved by adding X-Frame-Options = SAMEORIGIN on header**
 - [x]	no Anti-CSRF   **Solved by adding form.csrf_token() on each form html**
 - [x]	X-content type option header missing  - risk to xss attack   **Solved by adding X-Content-Type-Options = nosniff on header**
-- [ ]	cookie thieving
+- [x]	cookie thieving **Solved by adding Samesite=strict on app.config**
 - [ ]	cross domain config
 - [x]	content secure policy   **Solved by adding security to base.html header**
 - [x] Unupdated Libaries.  **Solved by updating to a the latest version**
