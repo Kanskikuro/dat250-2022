@@ -5,7 +5,7 @@ List of vurnebilities from social insecurity:
 - [X] Broken Authentication - No safe way to prove who you are and no password rules.   **Solved by using flask login**
      - [x] Insufficient Logging & Monitoring -No' time out / attemt restrictions, makes it eligible for brute force attacks. **Session timeout with flask.session. **
      - [X] Hashing password.  **Solved by using Hashlib_SHA256**
-     - [x} passwrod requirements  **adding requirements**
+     - [x] passwrod requirements  **adding requirements**
      
 - [X] Broken access control - change of the url. People has full access to others account by path traversing.   **Solved by using flask login**
 - [x] Unrestricted File Upload - can upload anythiong.        **Checking extentions of files**
@@ -18,6 +18,6 @@ List of vurnebilities from social insecurity:
 - [x] content secure policy   **Solved by adding security to base.html header**
 - [x] Unupdated Libaries.  **Solved by updating to a the latest version**
 - [x] updating libaries. example flask 1.1.1 to flask 2.2.2
-- [ ] Removing Errors in console log. missing samesite error
+- [x] resolving Errors in console log
 - [ ] when typing "username" in adding friends, the first registered account will be added. Doing it again will result in an error page
 - [x] adding session protection
