@@ -1,4 +1,4 @@
-from flask import Flask, g, session
+from flask import Flask, g
 from config import Config
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, UserMixin
