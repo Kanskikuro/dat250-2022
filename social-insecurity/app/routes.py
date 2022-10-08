@@ -2,6 +2,7 @@ from ssl import AlertDescription
 from flask import render_template, flash, redirect, url_for, request
 from app import app, query_db
 from app.forms import IndexForm, PostForm, FriendsForm, ProfileForm, CommentsForm
+import datetime as dt
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
@@ -9,6 +10,18 @@ import re
 from flask_login import login_user, login_required, logout_user, login_manager, current_user
 from app.__init__ import User, load_user
 import hashlib
+from flask import Flask
+import flask
+import flask_login
+#from flask_limiter import Limiter
+#from flask_limiter.util import get_remote_adress
+
+#import error for import get_remote_adress
+
+#limiter=Limiter(
+ #   app,
+  #  key_func=get_remote_adress
+#)
 
 def password_check(password):
     """
@@ -26,9 +39,18 @@ def password_check(password):
 
 salt = "5gz"
 
+#session timeout
+@app.before_request
+def before_request():
+    flask.session.permanent = True
+    app.permanent_session_lifetime=dt.timedelta(minutes=20)
+    flask.session.modified=True
+    flask.g.user=flask_login.current_user
+
 #home page/login/registration
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
+#@limiter.limit("1/day")
 def index():
     form = IndexForm()
     if form.login.is_submitted() and form.login.submit.data:
@@ -36,7 +58,7 @@ def index():
         if user == None:
             flash('Sorry, wrong password!')
         elif user['password'] == (hashlib.sha256((form.login.password.data + salt) .encode() )).hexdigest():
-            login_user(load_user(user["id"]))
+            login_user(load_user(user["id"]), remember=False)
             return redirect(url_for('stream'))
         else:
             flash('Sorry, wrong password!')
@@ -47,7 +69,7 @@ def index():
             query_db(
                 'INSERT INTO Users (username, first_name, last_name, password) VALUES("{}", "{}", "{}", "{}");'.format(
                     form.register.username.data, form.register.first_name.data,
-                    form.register.last_name.data, (hashlib.sha256((form.regiser.password.data + salt) .encode() )).hexdigest() ))
+                    form.register.last_name.data, (hashlib.sha256((form.register.password.data + salt) .encode() )).hexdigest() ))
         else:
             flash("Password does not meet the requirements")
         return redirect(url_for('index'))

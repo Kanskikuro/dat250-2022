@@ -17,6 +17,7 @@ app.config.update(
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'index'
+login_manager.session_protection="strong"
 
 db = SQLAlchemy(app)
 
