@@ -3,7 +3,8 @@
 List of vurnebilities from social insecurity:
 
 - [X] Broken Authentication - No safe way to prove who you are and no password rules.   **Solved by using flask login**
-     - [x] Insufficient Logging & Monitoring -No' time out / attemt restrictions, makes it eligible for brute force attacks. **Session timeout with flask.session.**
+     - [x] Insufficient Logging & Monitoring -No' time out  **Session timeout with flask.session.**
+     - [ ] Attemt restrictstions. Idea to solving, using limiter however importing get_remote_adress wouldnt work to out favour
      - [X] Hashing password.  **Solved by using Hashlib_SHA256**
      - [x] passwrod requirements  **adding requirements**
      
