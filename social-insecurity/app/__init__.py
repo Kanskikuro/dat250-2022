@@ -12,6 +12,7 @@ app.config.from_object(Config)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'index'
+login_manager.session_protection="strong"
 
 db = SQLAlchemy(app)
 
